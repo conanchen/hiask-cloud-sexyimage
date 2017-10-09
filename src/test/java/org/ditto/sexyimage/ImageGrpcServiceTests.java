@@ -10,6 +10,7 @@ import io.grpc.health.v1.HealthGrpc;
 import io.grpc.stub.StreamObserver;
 import net.intellij.plugins.sexyeditor.image.ImageGrpc;
 import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
+import org.ditto.sexyimage.grpc.Common;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
@@ -47,6 +48,7 @@ public class ImageGrpcServiceTests {
 
     private ManagedChannel channel;
     private ImageGrpc.ImageStub asyncStub;
+    private ImageGrpc.ImageBlockingStub blockingStub;
 
     @Value("${grpc.port}")
     int grpcPort;
@@ -66,6 +68,7 @@ public class ImageGrpcServiceTests {
                 .usePlaintext(true)
                 .build();
         asyncStub = ImageGrpc.newStub(channel);
+        blockingStub = ImageGrpc.newBlockingStub(channel);
     }
 
     @After
@@ -76,41 +79,42 @@ public class ImageGrpcServiceTests {
 
     @Test
     public void interceptors() throws ExecutionException, InterruptedException {
-
-        StreamObserver<ImageOuterClass.ToprankImageRequest> imageRequestStreamObserver =
-                asyncStub
-                        .withWaitForReady()
-                        .listToprankImages(new StreamObserver<ImageOuterClass.ImageResponse>() {
-                            @Override
-                            public void onNext(ImageOuterClass.ImageResponse value) {
-                                logger.info(String.format("onNext(ImageOuterClass.ImageResponse value) value=[%s]", gson.toJson(value)));
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-
-                            }
-
-                            @Override
-                            public void onCompleted() {
-
-                            }
-                        });
-
-        imageRequestStreamObserver.onNext(ImageOuterClass.ToprankImageRequest
+        ImageOuterClass.SubscribeRequest subscribeRequest = ImageOuterClass.SubscribeRequest
                 .newBuilder()
-                .addAllTypes(new ArrayList<ImageOuterClass.ImageType>() {{
-                    add(ImageOuterClass.ImageType.NORMAL);
-                }})
-                .build());
+                .addAllTypes(new ArrayList<Common.ImageType>() {
+                                 {
+                                     add(Common.ImageType.NORMAL);
+                                 }
+                             }
+                )
+                .build();
+
+        asyncStub.subscribe(subscribeRequest, new StreamObserver<Common.ImageResponse>() {
+            @Override
+            public void onNext(Common.ImageResponse value) {
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
+        Common.ImageResponse imageResponse = blockingStub.subscribe(subscribeRequest).next();
+
 
         // global interceptor should be invoked once on each service
-        Mockito.verify(globalInterceptor, Mockito.times(1))
+        Mockito.verify(globalInterceptor, Mockito.times(2))
                 .interceptCall(Mockito.any(), Mockito.any(), Mockito.any());
 
 
         // log interceptor should be invoked only on GreeterService and not CalculatorService
-        outputCapture.expect(CoreMatchers.containsString(ImageGrpc.METHOD_LIST_TOPRANK_IMAGES.getFullMethodName()));
+        outputCapture.expect(CoreMatchers.containsString(ImageGrpc.METHOD_SUBSCRIBE.getFullMethodName()));
 
     }
 
