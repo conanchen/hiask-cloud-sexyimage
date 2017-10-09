@@ -66,6 +66,7 @@ public class HelloController {
             Image image = Image.builder()
                     .setUrl(String.format("url%d", i))
                     .setInfoUrl(String.format("infoUrl%d", i))
+                    .setTitle(String.format("title%d",i))
                     .setType(Common.ImageType.NORMAL)
                     .setLastUpdated(System.currentTimeMillis())
                     .build();

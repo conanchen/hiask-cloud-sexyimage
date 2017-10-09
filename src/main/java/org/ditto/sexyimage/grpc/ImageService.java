@@ -126,6 +126,7 @@ public class ImageService extends ImageGrpc.ImageImplBase {
                         .builder()
                         .setUrl(request.getUrl())
                         .setInfoUrl(request.getUrl())
+                        .setTitle(String.format("%s",request.getUrl()))
                         .setType(Common.ImageType.NORMAL)
                         .setToprank(false)
                         .setActive(false)

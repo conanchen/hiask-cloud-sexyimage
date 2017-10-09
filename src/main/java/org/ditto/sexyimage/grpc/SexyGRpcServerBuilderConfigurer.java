@@ -19,7 +19,7 @@ public class SexyGRpcServerBuilderConfigurer extends GRpcServerBuilderConfigurer
         if (serverBuilder instanceof NettyServerBuilder) {
             NettyServerBuilder nettyServerBuilder = (NettyServerBuilder) serverBuilder;
             nettyServerBuilder.maxConcurrentCallsPerConnection(3);
-            nettyServerBuilder.keepAliveTime(1, TimeUnit.MINUTES);
+//            nettyServerBuilder.permitKeepAliveTime(1, TimeUnit.MINUTES);
             logger.info(String.format("configure done"));
         }
 //            serverBuilder

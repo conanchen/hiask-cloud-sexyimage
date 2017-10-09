@@ -26,7 +26,7 @@ public class ImageManService extends ImageManGrpc.ImageManImplBase {
     public void list(Imageman.ListRequest request, StreamObserver<Common.ImageResponse> responseObserver) {
         List<Image> imageList = imageRepository.getAllBy(request.getType(), request.getLastUpdated(), new PageRequest(0, 10));
         if (imageList != null) {
-            logger.info(String.format("send imageList.size()=%d", imageList.size()));
+            logger.info(String.format("ListRequest request=[%s]\n send imageList.size()=%d", gson.toJson(request),imageList.size()));
             for (Image im : imageList) {
 
                 Common.ImageResponse response = Common.ImageResponse
