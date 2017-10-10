@@ -106,7 +106,8 @@ public class ImageService extends ImageGrpc.ImageImplBase {
                             .setType(im.getType())
                             .build();
                     serverCallStreamObserver.onNext(response);
-                    logger.info(String.format("serverCallStreamObserver=%s SendImages onNext url=[%s]",serverCallStreamObserver.toString(), im.getUrl()));
+                    logger.info(String.format("serverCallStreamObserver=%s SendImages onNext url=[%s]\n infoUrl=[%s]",
+                            serverCallStreamObserver.toString(), im.getUrl(),im.getInfoUrl()));
                 } else {
                     logger.info(String.format("SendImages serverCallStreamObserver is not ready, discard url=[%s]", im.getUrl()));
                 }
