@@ -2,9 +2,8 @@ package org.ditto.sexyimage.model;
 
 import com.google.common.base.Strings;
 import lombok.Data;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
-import org.ditto.sexyimage.grpc.Common;
+import org.ditto.sexyimage.common.grpc.ImageType;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -24,7 +23,7 @@ public class Image implements Serializable {
     @QuerySqlField
     private String desc;
     @QuerySqlField(index = true)
-    private Common.ImageType type;
+    private ImageType type;
     @QuerySqlField
     private long created;
     @QuerySqlField(index = true)
@@ -40,7 +39,7 @@ public class Image implements Serializable {
     public Image() {
     }
 
-    private Image(String url, String infoUrl, String title, String desc, Common.ImageType type, long created, long lastUpdated, boolean active, boolean toprank, long visitCount) {
+    private Image(String url, String infoUrl, String title, String desc, ImageType type, long created, long lastUpdated, boolean active, boolean toprank, long visitCount) {
         this.url = url;
         this.infoUrl = infoUrl;
         this.title = title;
@@ -62,7 +61,7 @@ public class Image implements Serializable {
         private String infoUrl;
         private String title;
         private String desc;
-        private Common.ImageType type;//NORMAL,SEXY,PORN
+        private ImageType type;//NORMAL,SEXY,PORN
         private long created;
         private long lastUpdated;
         private boolean active;
@@ -113,7 +112,7 @@ public class Image implements Serializable {
             return this;
         }
 
-        public Builder setType(Common.ImageType type) {
+        public Builder setType(ImageType type) {
             this.type = type;
             return this;
         }

@@ -3,9 +3,14 @@ package org.ditto.sexyimage.grpc;
 import com.google.gson.Gson;
 import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
-import net.intellij.plugins.sexyeditor.image.ImageGrpc;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
+import net.intellij.plugins.livesexyeditor.grpc.ImageGrpc;
+import net.intellij.plugins.livesexyeditor.grpc.SubscribeRequest;
+import net.intellij.plugins.livesexyeditor.grpc.VisitRequest;
+import net.intellij.plugins.livesexyeditor.grpc.VisitResponse;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.ditto.sexyimage.common.grpc.Error;
+import org.ditto.sexyimage.common.grpc.ImageResponse;
+import org.ditto.sexyimage.common.grpc.ImageType;
 import org.ditto.sexyimage.model.Image;
 import org.ditto.sexyimage.repository.ImageRepository;
 import org.lognet.springboot.grpc.GRpcService;
@@ -20,7 +25,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static reactor.bus.selector.Selectors.$;
@@ -38,11 +42,11 @@ public class ImageService extends ImageGrpc.ImageImplBase {
 
 
     private UrlValidator urlValidator = new UrlValidator();
-    private static LinkedHashSet<StreamObserver<Common.ImageResponse>> responseObservers = new LinkedHashSet<>();
+    private static LinkedHashSet<StreamObserver<ImageResponse>> responseObservers = new LinkedHashSet<>();
 
 
     @Override
-    public void subscribe(ImageOuterClass.SubscribeRequest request, StreamObserver<Common.ImageResponse> responseObserver) {
+    public void subscribe(SubscribeRequest request, StreamObserver<ImageResponse> responseObserver) {
         logger.info(String.format("subscribeImages request=[%s]", gson.toJson(request.getTypesList())));
         ServerCallStreamObserver serverCallStreamObserver = (ServerCallStreamObserver) responseObserver;
         class MyRunnable implements Runnable {
@@ -75,11 +79,11 @@ public class ImageService extends ImageGrpc.ImageImplBase {
 
     final CountDownLatch finishLatch = new CountDownLatch(1);
 
-    private void nthBatchImagesForTheSubscription(ServerCallStreamObserver<Common.ImageResponse> serverCallStreamObserver,
-                                                  List<Common.ImageType> typesList, int page, int pageSize) {
+    private void nthBatchImagesForTheSubscription(ServerCallStreamObserver<ImageResponse> serverCallStreamObserver,
+                                                  List<ImageType> typesList, int page, int pageSize) {
         //start first batch images for the subscrition
         List dbimages = new ArrayList<>();
-        for (Common.ImageType it : typesList) {
+        for (ImageType it : typesList) {
             List<Image> images = imageRepository.getTopRankBy(it, new PageRequest(page, pageSize));
             dbimages.addAll(images);
         }
@@ -88,7 +92,7 @@ public class ImageService extends ImageGrpc.ImageImplBase {
         //end first batch images for the subscrition
     }
 
-    private void sendImages(ServerCallStreamObserver<Common.ImageResponse> serverCallStreamObserver, List<Image> images) {
+    private void sendImages(ServerCallStreamObserver<ImageResponse> serverCallStreamObserver, List<Image> images) {
         if (images != null) {
             for (Image im : images) {
                 if (!serverCallStreamObserver.isReady()) {
@@ -99,7 +103,7 @@ public class ImageService extends ImageGrpc.ImageImplBase {
                     }
                 }
                 if (serverCallStreamObserver.isReady()) {
-                    Common.ImageResponse response = Common.ImageResponse
+                    ImageResponse response = ImageResponse
                             .newBuilder()
                             .setUrl(im.getUrl())
                             .setInfoUrl(im.getInfoUrl())
@@ -116,7 +120,7 @@ public class ImageService extends ImageGrpc.ImageImplBase {
     }
 
     @Override
-    public void visit(ImageOuterClass.VisitRequest request, StreamObserver<ImageOuterClass.VisitResponse> responseObserver) {
+    public void visit(VisitRequest request, StreamObserver<VisitResponse> responseObserver) {
 
         logger.fine(String.format("VisitRequest.url=%s", request.getUrl()));
         if (urlValidator.isValid(request.getUrl())) {
@@ -128,7 +132,7 @@ public class ImageService extends ImageGrpc.ImageImplBase {
                         .setUrl(request.getUrl())
                         .setInfoUrl(request.getUrl())
                         .setTitle(String.format("%s",request.getUrl()))
-                        .setType(Common.ImageType.SECRET)
+                        .setType(ImageType.SECRET)
                         .setToprank(false)
                         .setActive(false)
                         .setCreated(System.currentTimeMillis())
@@ -141,9 +145,9 @@ public class ImageService extends ImageGrpc.ImageImplBase {
             }
             logger.info(String.format("Visit image url=%s visitCount=%d", im.getUrl(), im.getVisitCount()));
             im = imageRepository.save(im.getUrl(), im);
-            responseObserver.onNext(ImageOuterClass.VisitResponse
+            responseObserver.onNext(VisitResponse
                     .newBuilder()
-                    .setError(Common.Error
+                    .setError(Error
                             .newBuilder()
                             .setCode("image.visit.ok")
                             .setDetails(String.format("visitCount=%d", im.getVisitCount()))

@@ -1,17 +1,14 @@
 package org.ditto.sexyimage;
 
 import com.google.gson.Gson;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
+import org.apache.ignite.Ignite;
 import org.ditto.sexyimage.model.Breed;
 import org.ditto.sexyimage.model.Dog;
 import org.ditto.sexyimage.repository.BreedRepository;
 import org.ditto.sexyimage.repository.DogRepository;
 import org.ditto.sexyimage.repository.SpringConfig;
-import org.apache.ignite.Ignite;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.sql.Date;
 import java.util.List;

@@ -8,9 +8,10 @@ import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 import io.grpc.stub.StreamObserver;
-import net.intellij.plugins.sexyeditor.image.ImageGrpc;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
-import org.ditto.sexyimage.grpc.Common;
+import net.intellij.plugins.livesexyeditor.grpc.ImageGrpc;
+import net.intellij.plugins.livesexyeditor.grpc.SubscribeRequest;
+import org.ditto.sexyimage.common.grpc.ImageResponse;
+import org.ditto.sexyimage.common.grpc.ImageType;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
@@ -79,19 +80,19 @@ public class ImageGrpcServiceTests {
 
     @Test
     public void interceptors() throws ExecutionException, InterruptedException {
-        ImageOuterClass.SubscribeRequest subscribeRequest = ImageOuterClass.SubscribeRequest
+        SubscribeRequest subscribeRequest = SubscribeRequest
                 .newBuilder()
-                .addAllTypes(new ArrayList<Common.ImageType>() {
+                .addAllTypes(new ArrayList<ImageType>() {
                                  {
-                                     add(Common.ImageType.NORMAL);
+                                     add(ImageType.NORMAL);
                                  }
                              }
                 )
                 .build();
 
-        asyncStub.subscribe(subscribeRequest, new StreamObserver<Common.ImageResponse>() {
+        asyncStub.subscribe(subscribeRequest, new StreamObserver<ImageResponse>() {
             @Override
-            public void onNext(Common.ImageResponse value) {
+            public void onNext(ImageResponse value) {
 
             }
 
@@ -105,7 +106,7 @@ public class ImageGrpcServiceTests {
 
             }
         });
-        Common.ImageResponse imageResponse = blockingStub.subscribe(subscribeRequest).next();
+        ImageResponse imageResponse = blockingStub.subscribe(subscribeRequest).next();
 
 
         // global interceptor should be invoked once on each service

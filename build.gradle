@@ -13,23 +13,27 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${SPRING_BOOT_VERSION}")
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
     }
 }
 apply plugin: 'idea'
-apply plugin: 'com.google.protobuf'
 apply plugin: 'org.springframework.boot'
 
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
+
 
 repositories {
     mavenCentral()
     jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
 
 dependencies {
+
+    compile ("com.github.conanchen.hiask-api-sexyimage:grpc-manage-java:master-SNAPSHOT")
 
     compile("org.lognet:grpc-spring-boot-starter:$GRPC_STARTER_VERSION") {
         exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
@@ -80,39 +84,8 @@ dependencies {
     compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
 }
 
-protobuf {
-    // Configure the protoc executable
-    protoc {
-        // Download from repositories
-        artifact = 'com.google.protobuf:protoc:3.0.0'
-
-    }
-    plugins {
-        // Define a plugin with name 'grpc'
-        grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.6.1'
-        }
-    }
-
-    generateProtoTasks {
-        all()*.plugins {
-            grpc {}
-        }
-    }
-
-    generatedFilesBaseDir = "$projectDir/build/generated/source/proto"
-}
-
-clean {
-    delete protobuf.generatedFilesBaseDir
-}
-
 idea {
     module {
-        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java")
-        // If you have additional sourceSets and/or codegen plugins, add all of them
-        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/grpc")
-
     }
 }
 
@@ -124,6 +97,5 @@ dependencyManagement {
 }
 
 project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-project.logger.lifecycle("~~~1. Run Task BuildDependents To Compile Protobuf~~~~~~~~~~~");
-project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+project.logger.lifecycle("~~~~~~~~~~~~~~BUILDING HIASK-CLOUD-SEXYIMAGE~~~~~~~~~~~~~~~~~");
 project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");

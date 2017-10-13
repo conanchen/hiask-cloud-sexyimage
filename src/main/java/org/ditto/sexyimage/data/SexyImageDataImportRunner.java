@@ -2,9 +2,8 @@ package org.ditto.sexyimage.data;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
 import org.apache.ignite.Ignite;
-import org.ditto.sexyimage.grpc.Common;
+import org.ditto.sexyimage.common.grpc.ImageType;
 import org.ditto.sexyimage.model.Image;
 import org.ditto.sexyimage.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class SexyImageDataImportRunner implements CommandLineRunner {
                     .setUrl("http://n.7k7kimg.cn/2013/0316/1363403616970.jpg?" + i)
                     .setInfoUrl("http://www.baidu.com")
                     .setTitle(String.format("%d NORMAL image",i))
-                    .setType(Common.ImageType.NORMAL)
+                    .setType(ImageType.NORMAL)
                     .setLastUpdated(System.currentTimeMillis())
                     .build();
             image = imageRepository.save(image.getUrl(), image);
@@ -48,7 +47,7 @@ public class SexyImageDataImportRunner implements CommandLineRunner {
                     .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg?" + i)
                     .setInfoUrl("http://www.qq.com")
                     .setTitle(String.format("%d POSTER image",i))
-                    .setType(Common.ImageType.POSTER)
+                    .setType(ImageType.POSTER)
                     .setLastUpdated(System.currentTimeMillis())
                     .build();
             image = imageRepository.save(image.getUrl(), image);
@@ -59,7 +58,7 @@ public class SexyImageDataImportRunner implements CommandLineRunner {
                     .setUrl("http://n.7k7kimg.cn/2013/0316/1363403583271.jpg?" + i)
                     .setInfoUrl("http://www.sohu.com")
                     .setTitle(String.format("%d SEXY image",i))
-                    .setType(Common.ImageType.SEXY)
+                    .setType(ImageType.SEXY)
                     .setLastUpdated(System.currentTimeMillis())
                     .build();
             image = imageRepository.save(image.getUrl(), image);
@@ -70,7 +69,7 @@ public class SexyImageDataImportRunner implements CommandLineRunner {
                     .setUrl("http://www.zjol.com.cn/pic/0/01/35/25/1352581_955017.jpg?" + i)
                     .setInfoUrl("http://www.163.com")
                     .setTitle(String.format("%d PORN image",i))
-                    .setType(Common.ImageType.PORN)
+                    .setType(ImageType.PORN)
                     .setLastUpdated(System.currentTimeMillis())
                     .build();
             image = imageRepository.save(image.getUrl(), image);
@@ -81,7 +80,7 @@ public class SexyImageDataImportRunner implements CommandLineRunner {
                     .setUrl("https://in.bookmyshow.com/entertainment/wp-content/uploads/Tamanna-feature.jpg?" + i)
                     .setInfoUrl("http://www.ifeng.com")
                     .setTitle(String.format("%d SECRET image",i))
-                    .setType(Common.ImageType.SECRET)
+                    .setType(ImageType.SECRET)
                     .setLastUpdated(System.currentTimeMillis())
                     .build();
             image = imageRepository.save(image.getUrl(), image);

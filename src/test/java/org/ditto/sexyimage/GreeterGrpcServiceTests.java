@@ -3,13 +3,14 @@ package org.ditto.sexyimage;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.ServerInterceptor;
+import io.grpc.examples.greeter.GreeterGrpc;
+import io.grpc.examples.greeter.HelloReply;
+import io.grpc.examples.greeter.HelloRequest;
 import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 
 import io.grpc.stub.StreamObserver;
-import org.ditto.greeter.grpc.GreeterGrpc;
-import org.ditto.greeter.grpc.GreeterOuterClass;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
@@ -73,7 +74,7 @@ public class GreeterGrpcServiceTests {
 
         String name = "John";
         final GreeterGrpc.GreeterFutureStub greeterFutureStub = GreeterGrpc.newFutureStub(channel);
-        final GreeterOuterClass.HelloRequest helloRequest = GreeterOuterClass.HelloRequest.newBuilder().setName(name).build();
+        final HelloRequest helloRequest = HelloRequest.newBuilder().setName(name).build();
         final String reply = greeterFutureStub.sayHello(helloRequest).get().getMessage();
         assertNotNull(reply);
         assertTrue(String.format("Replay should contain name '%s'", name), reply.contains(name));
@@ -84,10 +85,10 @@ public class GreeterGrpcServiceTests {
     public void interceptors() throws ExecutionException, InterruptedException {
 
         GreeterGrpc.newStub(channel)
-                .sayHello(GreeterOuterClass.HelloRequest.newBuilder().setName("name").build(),
-                        new StreamObserver<GreeterOuterClass.HelloReply>() {
+                .sayHello(HelloRequest.newBuilder().setName("name").build(),
+                        new StreamObserver<HelloReply>() {
                             @Override
-                            public void onNext(GreeterOuterClass.HelloReply value) {
+                            public void onNext(HelloReply value) {
 
                             }
 
@@ -103,11 +104,11 @@ public class GreeterGrpcServiceTests {
                         });
 
         GreeterGrpc.newFutureStub(channel)
-                .sayHello(GreeterOuterClass.HelloRequest.newBuilder().setName("name").build())
+                .sayHello(HelloRequest.newBuilder().setName("name").build())
                 .get().getMessage();
 
         GreeterGrpc.newBlockingStub(channel)
-                .sayHello(GreeterOuterClass.HelloRequest.newBuilder().setName("name").build())
+                .sayHello(HelloRequest.newBuilder().setName("name").build())
                 .getMessage();
 
 

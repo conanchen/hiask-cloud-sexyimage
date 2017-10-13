@@ -1,8 +1,7 @@
 package org.ditto.sexyimage.controller;
 
 import com.google.gson.Gson;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
-import org.ditto.sexyimage.grpc.Common;
+import org.ditto.sexyimage.common.grpc.ImageType;
 import org.ditto.sexyimage.model.Breed;
 import org.ditto.sexyimage.model.Image;
 import org.ditto.sexyimage.repository.BreedRepository;
@@ -67,12 +66,12 @@ public class HelloController {
                     .setUrl(String.format("url%d", i))
                     .setInfoUrl(String.format("infoUrl%d", i))
                     .setTitle(String.format("title%d",i))
-                    .setType(Common.ImageType.NORMAL)
+                    .setType(ImageType.NORMAL)
                     .setLastUpdated(System.currentTimeMillis())
                     .build();
             imageRepository.save(image.getUrl(), image);
         }
-        List<Image> ids = imageRepository.getAllBy(Common.ImageType.NORMAL, 0, new PageRequest(0, 10));
+        List<Image> ids = imageRepository.getAllBy(ImageType.NORMAL, 0, new PageRequest(0, 10));
         return gson.toJson(ids);
     }
 

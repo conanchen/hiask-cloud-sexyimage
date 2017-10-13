@@ -2,13 +2,19 @@ package org.ditto.sexyimage.grpc;
 
 import com.google.gson.Gson;
 import io.grpc.stub.StreamObserver;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.ditto.sexyimage.common.grpc.ImageResponse;
+import org.ditto.sexyimage.common.grpc.StatusResponse;
+import org.ditto.sexyimage.manage.grpc.DeleteRequest;
+import org.ditto.sexyimage.manage.grpc.ImageManGrpc;
+import org.ditto.sexyimage.manage.grpc.ListRequest;
+import org.ditto.sexyimage.manage.grpc.UpsertRequest;
 import org.ditto.sexyimage.model.Image;
 import org.ditto.sexyimage.repository.ImageRepository;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.ditto.sexyimage.common.grpc.Error;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,13 +29,13 @@ public class ImageManService extends ImageManGrpc.ImageManImplBase {
     private UrlValidator urlValidator = new UrlValidator();
 
     @Override
-    public void list(Imageman.ListRequest request, StreamObserver<Common.ImageResponse> responseObserver) {
+    public void list(ListRequest request, StreamObserver<ImageResponse> responseObserver) {
         List<Image> imageList = imageRepository.getAllBy(request.getType(), request.getLastUpdated(), new PageRequest(0, 10));
         if (imageList != null) {
-            logger.info(String.format("ListRequest request=[%s]\n send imageList.size()=%d", gson.toJson(request),imageList.size()));
+            logger.info(String.format("ListRequest request=[%s]\n send imageList.size()=%d", gson.toJson(request), imageList.size()));
             for (Image im : imageList) {
 
-                Common.ImageResponse response = Common.ImageResponse
+                ImageResponse response = ImageResponse
                         .newBuilder()
                         .setUrl(im.getUrl())
                         .setInfoUrl(im.getInfoUrl())
@@ -40,14 +46,14 @@ public class ImageManService extends ImageManGrpc.ImageManImplBase {
                         .setActive(im.isActive())
                         .build();
                 responseObserver.onNext(response);
-                logger.info(String.format("send image.url=%s image=[%s]", im.getUrl(),gson.toJson(im)));
+                logger.info(String.format("send image.url=%s image=[%s]", im.getUrl(), gson.toJson(im)));
             }
             responseObserver.onCompleted();
         }
     }
 
     @Override
-    public void upsert(Imageman.UpsertRequest request, StreamObserver<Common.StatusResponse> responseObserver) {
+    public void upsert(UpsertRequest request, StreamObserver<StatusResponse> responseObserver) {
         if (urlValidator.isValid(request.getUrl())) {
             // save and increase visitCount
             Image im = imageRepository.findOne(request.getUrl());
@@ -65,9 +71,9 @@ public class ImageManService extends ImageManGrpc.ImageManImplBase {
                         .setVisitCount(0)
                         .build();
             } else {
-                if (request.getInfoUrl()!=null) im.setInfoUrl(request.getInfoUrl());
-                if (request.getTitle()!=null) im.setTitle(request.getTitle());
-                if (request.getDesc()!=null) im.setDesc(request.getDesc());
+                if (request.getInfoUrl() != null) im.setInfoUrl(request.getInfoUrl());
+                if (request.getTitle() != null) im.setTitle(request.getTitle());
+                if (request.getDesc() != null) im.setDesc(request.getDesc());
 
                 im.setType(request.getType());
                 im.setLastUpdated(System.currentTimeMillis());
@@ -77,9 +83,9 @@ public class ImageManService extends ImageManGrpc.ImageManImplBase {
             logger.info(String.format("Upsert image url=%s visitCount=%d", im.getUrl(), im.getVisitCount()));
             im = imageRepository.save(im.getUrl(), im);
 
-            responseObserver.onNext(Common.StatusResponse
+            responseObserver.onNext(StatusResponse
                     .newBuilder()
-                    .setError(Common.Error
+                    .setError(Error
                             .newBuilder()
                             .setCode("image.upsert.ok")
                             .build())
@@ -90,13 +96,13 @@ public class ImageManService extends ImageManGrpc.ImageManImplBase {
 
 
     @Override
-    public void delete(Imageman.DeleteRequest request, StreamObserver<Common.StatusResponse> responseObserver) {
+    public void delete(DeleteRequest request, StreamObserver<StatusResponse> responseObserver) {
         String url = request.getUrl();
         logger.info(String.format("Delete image url=%s ", url));
         imageRepository.delete(url);
-        responseObserver.onNext(Common.StatusResponse
+        responseObserver.onNext(StatusResponse
                 .newBuilder()
-                .setError(Common.Error
+                .setError(Error
                         .newBuilder()
                         .setCode("OK")
                         .build())
