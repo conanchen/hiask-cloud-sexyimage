@@ -1,4 +1,11 @@
-Sexy Images  Cloud Service
+# Sexy Image eco-system
+1. Intellij Plugin: [live-sexyeditor](https://github.com/conanchen/live-sexyeditor)
+2. Android App: [hiask-android-sexyimage](https://github.com/conanchen/hiask-android-sexyimage)
+3. Grpc Api: [hiask-api-sexyimage](https://github.com/conanchen/hiask-api-sexyimage)
+4. Cloud Service: [hiask-cloud-sexyimage](https://github.com/conanchen/hiask-cloud-sexyimage)
+
+
+#Sexy Images  Cloud Service
 - springboot
 - grpc
 - ignite
