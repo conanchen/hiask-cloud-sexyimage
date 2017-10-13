@@ -5,7 +5,7 @@
 4. Cloud Service: [hiask-cloud-sexyimage](https://github.com/conanchen/hiask-cloud-sexyimage)
 
 
-#Sexy Images  Cloud Service
+# Sexy Images  Cloud Service
 - springboot
 - grpc
 - ignite
@@ -14,7 +14,7 @@ Follow https://www.javacodegeeks.com/2017/07/apache-ignite-spring-data.html
 
 to integrate Spring Boot. 
 
-#application.properties
+# application.properties
 - gRPC Server started, listening on port 8980.
 grpc.port=8980 
 - Tomcat initialized with port(s): 8088 (http)
